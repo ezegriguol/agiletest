@@ -18,6 +18,8 @@ def master(request):
         
         if days >= int(os.environ.get('CACHE_TIME')):
             publisher = pubsub_v1.PublisherClient()        
+            
+            #Get Token from API
             response = requests.post("http://interview.agileengine.com/auth",headers={'Content-Type': 'application/json'}, data='{"apiKey":"' + os.environ.get('API_KEY') + '"}')
             token = json.loads(response.text)        
             if (token["auth"] == True):            
@@ -34,11 +36,14 @@ def master(request):
                                 'token': token["token"],
                                 'action': 'INSERT'
                                 }
+                        
+                        #Send a message for each photo to trigger the function download_detail.
                         publisher.publish("projects/agileenginetest/topics/photos", data=json.dumps(row).encode("utf-8"))
 
                     hasMore = pictures["hasMore"]
                     page += 1
-                            
+                
+                #Update last update into DB
                 db.collection(u'CacheRefresh').document().set( { u'updated': datetime.today().strftime('%Y%m%d') } )
             else:
                 logging.error("Invalid API Key")
