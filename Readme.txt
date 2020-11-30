@@ -1,5 +1,5 @@
 Requeriments to deploy the app.
-1) GCP Account activate for billing.
+1) GCP Account activated for billing.
 2) Terraform in local machine.
 
 Google Cloud Platform services used in this app:
